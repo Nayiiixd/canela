@@ -1,0 +1,168 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado — Cinnarolls</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'appcanela/css/mystyle.css' %}">
+</head>
+
+<body>
+
+    <nav>
+        <div class="container d-flex align-items-center">
+            <a class="nav-brand" href="{% url 'index' %}">
+                <i class="bi bi-emoji-heart-eyes"></i> Cinnarolls
+            </a>
+
+            <div class="nav-links ms-auto d-none d-md-flex align-items-center">
+                <a href="{% url 'index' %}">Inicio</a>
+                <a href="{% url 'menu' %}">Menú</a>
+                <a href="{% url 'nosotros' %}">Nosotros</a>
+                <a href="{% url 'nosotros' %}#contacto">Contacto</a>
+            </div>
+
+            <a class="nav-cart ms-3" href="{% url 'carrito' %}">
+                <i class="bi bi-bag"></i>
+                <span>0</span>
+            </a>
+
+            <button class="btn d-md-none ms-3 p-0 border-0" data-bs-toggle="collapse" data-bs-target="#mobileNav">
+                <i class="bi bi-list fs-4" style="color:var(--cinnamon)"></i>
+            </button>
+        </div>
+
+        <div class="collapse" id="mobileNav">
+            <div class="container py-2">
+                <a <a href="{% url 'index' %}" class="d-block py-2" style="color:var(--text-mid);text-decoration:none">Inicio</a>
+                <a href="{% url 'menu' %}" class="d-block py-2" style="color:var(--text-mid);text-decoration:none">Menú</a>
+                <a href="{% url 'nosotros' %}" class="d-block py-2" style="color:var(--text-mid);text-decoration:none">Nosotros</a>
+                <a href="{% url 'nosotros' %}#contacto" class="d-block py-2" style="color:var(--text-mid);text-decoration:none">Contacto</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="confirmacion-hero">
+        <div class="container" style="max-width:560px">
+            <div class="text-start mb-4">
+                <a href="{% url 'carrito' %}" class="btn-secundario fs-5">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+            </div>
+
+            <div class="confirmacion-icono">
+                <i class="bi bi-check-lg"></i>
+            </div>
+
+            <p class="carrito-eyebrow">
+                <i class="bi bi-heart-fill me-1"></i> ¡Todo listo!
+            </p>
+
+            <h1>¡Gracias por tu pedido!</h1>
+
+            <p>
+                Hemos recibido tu pedido correctamente. Pronto estará listo con todo el amor de Cinnarolls.
+            </p>
+        </div>
+    </div>
+
+    <div class="stats-strip">
+        <div class="container">
+            <div class="row g-0">
+                <div class="col-6 col-md-3 stat-item">
+                    <i class="bi bi-fire"></i>
+                    <strong>Fresco</strong>
+                    <span>Horneado al momento</span>
+                </div>
+
+                <div class="col-6 col-md-3 stat-item">
+                    <i class="bi bi-heart-fill"></i>
+                    <strong>Con amor</strong>
+                    <span>Hecho a mano</span>
+                </div>
+
+                <div class="col-6 col-md-3 stat-item">
+                    <i class="bi bi-bag-check-fill"></i>
+                    <strong>#1234</strong>
+                    <span>Pedido confirmado</span>
+                </div>
+
+                <div class="col-6 col-md-3 stat-item">
+                    <i class="bi bi-clock-fill"></i>
+                    <strong>En camino</strong>
+                    <span>Preparando tu orden</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirmacion-body">
+        <div class="container" style="max-width:560px">
+
+            <div class="text-center mb-5">
+                <p class="section-label">Resumen</p>
+                <h2 class="section-title">Detalles del pedido</h2>
+            </div>
+
+            <div class="contact-form-wrap">
+                <p class="section-label mb-4">
+                    <i class="bi bi-receipt me-1"></i> Pedido #1234
+                </p>
+
+                <div class="detalle-row">
+                    <span class="detalle-label">Fecha</span>
+                    <span class="detalle-valor" id="conf-fecha">--</span>
+                </div>
+
+                <div class="detalle-row">
+                    <span class="detalle-label">Hora</span>
+                    <span class="detalle-valor" id="conf-hora">--</span>
+                </div>
+
+                <div class="detalle-row">
+                    <span class="detalle-label">Método de pago</span>
+                    <span class="detalle-valor">Efectivo</span>
+                </div>
+
+                <div class="detalle-row">
+                    <span class="detalle-label">Entrega</span>
+                    <span class="detalle-valor" id="conf-entrega">--</span>
+                </div>
+
+                <div class="detalle-total-row">
+                    <span class="detalle-total-label">Total</span>
+                    <span class="detalle-total-valor" id="conf-total">$9.000</span>
+                </div>
+            </div>
+
+            <div class="ornament-divider py-4">
+                <i class="bi bi-flower1"></i>
+            </div>
+
+            <div class="d-grid">
+                <a href="{% url 'index' %}" class="btn-cinnamon justify-content-center">
+                    <i class="bi bi-house-heart-fill"></i> Volver al inicio
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p class="mb-1">© 2026 <strong>Cinnarolls</strong> — Hechos con amor, pensados para ti 🍥</p>
+        <p class="mb-0" style="font-size:.75rem">Concepción, Chile</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

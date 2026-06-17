@@ -40,4 +40,4 @@ tips:
 
 -git pull origin main para ver los nuevos cambios ke alguein hizo y tener la version nueva en tu visual
 
-ahi buscan los comandos ke necesiten por internet igual
+ahi buscan los comandos ke necesiten por internet igual o info porke es harto envd para chambear bien
