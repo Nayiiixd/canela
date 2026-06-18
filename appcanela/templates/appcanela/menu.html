@@ -91,89 +91,60 @@
 
             <div class="row g-4">
 
-                <div class="col-xl-6">
-                    <div class="menu-card-item">
+    {% for producto in productos %}
+        <div class="col-xl-6">
+            <div class="menu-card-item">
 
-                        <div class="menu-image-wrap">
-                            <img src="{% static 'appcanela/img/clasico.png' %}" alt="Clásico">
-                        </div>
-
-                        <div class="menu-card-content">
-
-                            <div class="menu-top-row">
-                                <div>
-                                    <h5>Clásico</h5>
-                                    <small>Más vendido</small>
-                                </div>
-
-                                <button class="favorite-btn" type="button">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
-
-                            <p>
-                                El tradicional cinnamon roll con glaseado
-                                artesanal de vainilla y canela.
-                            </p>
-
-                            <div class="menu-tags">
-                                <span>Canela</span>
-                                <span>Glaseado</span>
-                            </div>
-
-                            <div class="menu-card-bottom">
-                                <span>$2.500</span>
-
-                                <button class="btn-cinnamon-small" type="button">
-                                    Agregar
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
+                <div class="menu-image-wrap">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <img src="{% static 'appcanela/img/logo.png' %}" alt="{{ producto.nombre }}">
+                    {% endif %}
                 </div>
 
-                <div class="col-xl-6">
-                    <div class="menu-card-item">
+                <div class="menu-card-content">
 
-                        <div class="menu-image-wrap">
-                            <img src="{% static 'appcanela/img/chocPistacho.png' %}" alt="Chocolate y Pistacho">
+                    <div class="menu-top-row">
+                        <div>
+                            <h5>{{ producto.nombre }}</h5>
+                            <small>{{ producto.categoria }}</small>
                         </div>
 
-                        <div class="menu-card-content">
-
-                            <div class="menu-top-row">
-                                <div>
-                                    <h5>Chocolate y Pistacho</h5>
-                                    <small>Favorito</small>
-                                </div>
-
-                                <button class="favorite-btn" type="button">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
-
-                            <p>
-                                Cubierto con ganache de chocolate
-                                y topping crunchy especial.
-                            </p>
-
-                            <div class="menu-tags">
-                                <span>Chocolate</span>
-                                <span>Crunchy</span>
-                            </div>
-
-                            <div class="menu-card-bottom">
-                                <span>$3.500</span>
-
-                                <button class="btn-cinnamon-small" type="button">
-                                    Agregar
-                                </button>
-                            </div>
-
-                        </div>
+                        <button class="favorite-btn" type="button">
+                            <i class="bi bi-heart"></i>
+                        </button>
                     </div>
+
+                    <p>
+                        {{ producto.descripcion }}
+                    </p>
+
+                    <div class="menu-tags">
+                        <span>{{ producto.categoria }}</span>
+                        {% if producto.disponible %}
+                            <span>Disponible</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="menu-card-bottom">
+                        <span>${{ producto.precio }}</span>
+
+                        <button class="btn-cinnamon-small" type="button">
+                            Agregar
+                        </button>
+                    </div>
+
                 </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center">
+            <p>No hay productos disponibles por ahora.</p>
+        </div>
+    {% endfor %}
+
+</div>
 
                 <div class="col-xl-6">
                     <div class="menu-card-item">
