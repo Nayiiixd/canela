@@ -1,3 +1,45 @@
+# Cinnarolls 🍥
+
+Tienda web de cinnamon rolls hecha con **Django 6**. Incluye catálogo de productos, carrito de compras, registro/login de clientes y un panel de administración con gestión de productos (crear/editar/eliminar con foto) y pedidos.
+
+## Cómo correr el proyecto
+
+Necesitás **Python 3.12+** instalado.
+
+```bash
+# 1) Clonar el repo
+git clone <URL-DEL-REPO>
+cd canela
+
+# 2) Crear el entorno virtual e instalar dependencias
+python3 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+# 3) Aplicar migraciones
+python manage.py migrate
+
+# 4) Levantar el servidor
+python manage.py runserver
+```
+
+Después abrí **http://localhost:8000/** en el navegador.
+
+### Usuarios de prueba (solo desarrollo)
+
+| Rol | Dónde | Usuario / Email | Clave |
+|-----|-------|-----------------|-------|
+| Admin | `/admin/` (Django) | `admin` | `admin1234` |
+| Admin | `/login/` (sitio) | `admin@cinnarolls.cl` | `admin1234` |
+| Cliente | `/login/` (sitio) | `cliente@test.cl` | `test1234` |
+
+> El login del **sitio** es por **email**; el de `/admin/` es por **nombre de usuario**.
+> Los productos se administran desde el **Panel Admin** (menú del usuario, arriba a la derecha) → pestaña **Productos**.
+
+---
+
+## Notas de Git del equipo
+
 commit = guardar versión
 push = subir versión a GitHub
 pull = bajar cambios de otros

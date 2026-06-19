@@ -470,7 +470,7 @@
                     <div class="admin-panel">
                         <div class="admin-panel-header">
                             <h6><i class="bi bi-grid-fill me-2" style="color:var(--cinnamon)"></i>Catálogo de productos</h6>
-                            <a href="/admin/appcanela/producto/add/" class="btn btn-sm btn-outline-secondary rounded-pill">
+                            <a href="{% url 'producto_nuevo' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
                                 <i class="bi bi-plus me-1"></i>Nuevo producto
                             </a>
                         </div>
@@ -502,7 +502,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="/admin/appcanela/producto/{{ producto.pk }}/change/"
+                                        <a href="{% url 'producto_editar' producto.pk %}"
                                            style="font-size:.8rem; color:var(--cinnamon); text-decoration:none; font-weight:700;">
                                             <i class="bi bi-pencil-fill"></i> Editar
                                         </a>
@@ -510,7 +510,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr class="admin-table-empty">
-                                    <td colspan="5"><i class="bi bi-inbox me-2"></i>No hay productos. <a href="/admin/appcanela/producto/add/">Agregar uno</a></td>
+                                    <td colspan="5"><i class="bi bi-inbox me-2"></i>No hay productos. <a href="{% url 'producto_nuevo' %}">Agregar uno</a></td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

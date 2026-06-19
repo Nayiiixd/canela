@@ -126,3 +126,57 @@ def cambiar_estado_pedido(request, pedido_id):
         pedido.estado = nuevo_estado
         pedido.save()
     return redirect("panel_admin")
+
+
+CATEGORIAS_PRODUCTO = [
+    ("clasicos", "Clásicos"),
+    ("chocolate", "Chocolate"),
+    ("premium", "Premium"),
+    ("especiales", "Especiales"),
+]
+
+
+@user_passes_test(lambda u: u.is_staff)
+def producto_nuevo(request):
+    if request.method == "POST":
+        Producto.objects.create(
+            nombre=request.POST.get("nombre"),
+            categoria=request.POST.get("categoria"),
+            precio=int(request.POST.get("precio") or 0),
+            descripcion=request.POST.get("descripcion", ""),
+            disponible=request.POST.get("estado") == "activo",
+            imagen=request.FILES.get("imagen"),
+        )
+        return redirect("panel_admin")
+    return render(request, "appcanela/producto_form.html", {
+        "accion": "Nuevo producto",
+        "categorias": CATEGORIAS_PRODUCTO,
+    })
+
+
+@user_passes_test(lambda u: u.is_staff)
+def producto_editar(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    if request.method == "POST":
+        producto.nombre = request.POST.get("nombre")
+        producto.categoria = request.POST.get("categoria")
+        producto.precio = int(request.POST.get("precio") or 0)
+        producto.descripcion = request.POST.get("descripcion", "")
+        producto.disponible = request.POST.get("estado") == "activo"
+        if request.FILES.get("imagen"):
+            producto.imagen = request.FILES.get("imagen")
+        producto.save()
+        return redirect("panel_admin")
+    return render(request, "appcanela/producto_form.html", {
+        "accion": "Editar producto",
+        "producto": producto,
+        "categorias": CATEGORIAS_PRODUCTO,
+    })
+
+
+@user_passes_test(lambda u: u.is_staff)
+@require_POST
+def producto_eliminar(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    producto.delete()
+    return redirect("panel_admin")

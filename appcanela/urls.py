@@ -23,4 +23,9 @@ urlpatterns = [
     # Admin
     path('panel-admin/', views.panel_admin, name='panel_admin'),
     path('panel-admin/pedido/<int:pedido_id>/estado/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
+
+    # Gestión de productos (panel propio)
+    path('panel-admin/producto/nuevo/', views.producto_nuevo, name='producto_nuevo'),
+    path('panel-admin/producto/<int:producto_id>/editar/', views.producto_editar, name='producto_editar'),
+    path('panel-admin/producto/<int:producto_id>/eliminar/', views.producto_eliminar, name='producto_eliminar'),
 ]

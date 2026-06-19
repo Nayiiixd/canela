@@ -12,6 +12,41 @@
     <link rel="stylesheet" href="{% static 'appcanela/css/mystyle.css' %}">
     <style>
         .nav-login:focus, .nav-login:active { outline: none !important; box-shadow: none !important; }
+
+        /* Aviso (toast) cuando se agrega un producto al carrito */
+        .toast-carrito {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--cinnamon);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(59, 31, 16, .28);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            z-index: 1080;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity .3s ease, transform .3s ease;
+            pointer-events: none;
+            max-width: 90vw;
+        }
+        .toast-carrito.show { opacity: 1; transform: translateY(0); }
+        .toast-carrito i { font-size: 1.35rem; }
+
+        /* Espacio reservado para la foto cuando el producto no tiene imagen */
+        .menu-image-placeholder {
+            width: 150px; height: 150px; border-radius: 22px;
+            background: var(--warm-tan);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--cinnamon); font-size: 2.6rem;
+        }
+        @media (max-width: 991px) {
+            .menu-image-placeholder { width: 100%; max-width: 260px; height: 260px; }
+        }
     </style>
 </head>
 
@@ -104,113 +139,34 @@
     <section class="menu-section pb-5">
         <div class="container">
             <div class="row g-4">
-                <div class="col-xl-6 menu-item" data-category="clasicos">
+                {% for producto in productos %}
+                <div class="col-xl-6 menu-item" data-category="{{ producto.categoria }}">
                     <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/clasico.png' %}" alt="Clásico"></div>
+                        <div class="menu-image-wrap">
+                            {% if producto.imagen %}
+                            <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}">
+                            {% else %}
+                            <div class="menu-image-placeholder"><i class="bi bi-image"></i></div>
+                            {% endif %}
+                        </div>
                         <div class="menu-card-content">
                             <div class="menu-top-row">
-                                <div><h5>Clásico</h5><small>Más vendido</small></div>
+                                <div><h5>{{ producto.nombre }}</h5><small>{{ producto.categoria|capfirst }}</small></div>
                                 <button class="favorite-btn"><i class="bi bi-heart"></i></button>
                             </div>
-                            <p>El tradicional cinnamon roll con glaseado artesanal de vainilla y canela.</p>
-                            <div class="menu-tags"><span>Canela</span><span>Glaseado</span></div>
+                            <p>{{ producto.descripcion }}</p>
                             <div class="menu-card-bottom">
-                                <span>$2.500</span>
-                                <button class="btn-cinnamon-small" data-name="Clásico" data-price="2500">Agregar</button>
+                                <span>${{ producto.precio_clp }}</span>
+                                <button class="btn-cinnamon-small" data-name="{{ producto.nombre }}" data-price="{{ producto.precio }}">Agregar</button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-xl-6 menu-item" data-category="chocolate">
-                    <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/chocPistacho.png' %}" alt="Chocolate y Pistacho"></div>
-                        <div class="menu-card-content">
-                            <div class="menu-top-row">
-                                <div><h5>Chocolate y Pistacho</h5><small>Favorito</small></div>
-                                <button class="favorite-btn"><i class="bi bi-heart"></i></button>
-                            </div>
-                            <p>Cubierto con ganache de chocolate y topping crunchy especial.</p>
-                            <div class="menu-tags"><span>Chocolate</span><span>Crunchy</span></div>
-                            <div class="menu-card-bottom">
-                                <span>$3.500</span>
-                                <button class="btn-cinnamon-small" data-name="Chocolate y Pistacho" data-price="3500">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p>No hay productos disponibles por ahora.</p>
                 </div>
-
-                <div class="col-xl-6 menu-item" data-category="especiales">
-                    <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/oreo.png' %}" alt="Oreo"></div>
-                        <div class="menu-card-content">
-                            <div class="menu-top-row">
-                                <div><h5>Oreo</h5><small>Nuevo</small></div>
-                                <button class="favorite-btn"><i class="bi bi-heart"></i></button>
-                            </div>
-                            <p>Relleno suave con Oreo triturada y glaseado cremoso.</p>
-                            <div class="menu-tags"><span>Oreo</span><span>Cream</span></div>
-                            <div class="menu-card-bottom">
-                                <span>$3.000</span>
-                                <button class="btn-cinnamon-small" data-name="Oreo" data-price="3000">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 menu-item" data-category="premium">
-                    <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/pistacho.png' %}" alt="Pistacho"></div>
-                        <div class="menu-card-content">
-                            <div class="menu-top-row">
-                                <div><h5>Pistacho</h5><small>Premium</small></div>
-                                <button class="favorite-btn"><i class="bi bi-heart"></i></button>
-                            </div>
-                            <p>Glaseado artesanal de pistacho con topping tostado premium.</p>
-                            <div class="menu-tags"><span>Pistacho</span><span>Premium</span></div>
-                            <div class="menu-card-bottom">
-                                <span>$3.500</span>
-                                <button class="btn-cinnamon-small" data-name="Pistacho" data-price="3500">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 menu-item" data-category="especiales">
-                    <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/lotus.png' %}" alt="Lotus"></div>
-                        <div class="menu-card-content">
-                            <div class="menu-top-row">
-                                <div><h5>Lotus</h5><small>Especial</small></div>
-                                <button class="favorite-btn"><i class="bi bi-heart"></i></button>
-                            </div>
-                            <p>Delicioso relleno Lotus con galleta caramelizada.</p>
-                            <div class="menu-tags"><span>Lotus</span><span>Caramelo</span></div>
-                            <div class="menu-card-bottom">
-                                <span>$3.000</span>
-                                <button class="btn-cinnamon-small" data-name="Lotus" data-price="3000">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-6 menu-item" data-category="especiales">
-                    <div class="menu-card-item">
-                        <div class="menu-image-wrap"><img src="{% static 'appcanela/img/frutilla.png' %}" alt="Frutilla"></div>
-                        <div class="menu-card-content">
-                            <div class="menu-top-row">
-                                <div><h5>Frutilla</h5><small>Edición especial</small></div>
-                                <button class="favorite-btn"><i class="bi bi-heart"></i></button>
-                            </div>
-                            <p>Cobertura suave de frutilla con crema artesanal.</p>
-                            <div class="menu-tags"><span>Sweet</span><span>Berry</span></div>
-                            <div class="menu-card-bottom">
-                                <span>$3.000</span>
-                                <button class="btn-cinnamon-small" data-name="Frutilla" data-price="3000">Agregar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -228,10 +184,16 @@
         <p class="mb-0" style="font-size:.75rem">Concepción, Chile</p>
     </footer>
 
+    <!-- Aviso de producto agregado al carrito -->
+    <div id="toast-carrito" class="toast-carrito" role="status" aria-live="polite">
+        <i class="bi bi-bag-check-fill"></i>
+        <span id="toast-carrito-msg"></span>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-         
+
             function updateBadge() {
                 const cart = JSON.parse(localStorage.getItem('cart')) || [];
                 const count = cart.reduce((acc, item) => acc + item.qty, 0);
@@ -240,7 +202,19 @@
             }
             updateBadge();
 
-            
+            // Muestra un aviso con el nombre del producto recién agregado
+            let toastTimer;
+            function mostrarToast(nombre) {
+                const toast = document.getElementById('toast-carrito');
+                const msg = document.getElementById('toast-carrito-msg');
+                if (!toast || !msg) return;
+                msg.textContent = nombre + ' agregado al carrito';
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+            }
+
+
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -252,7 +226,7 @@
                 });
             });
 
-           
+
             document.querySelectorAll('.btn-cinnamon-small').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const name  = this.dataset.name;
@@ -263,8 +237,9 @@
                     else { cart.push({ name, price, qty: 1 }); }
                     localStorage.setItem('cart', JSON.stringify(cart));
                     updateBadge();
+                    mostrarToast(name);
 
-                    
+
                     const prev = this.textContent;
                     this.textContent = '¡Listo!';
                     this.disabled = true;
@@ -272,7 +247,7 @@
                 });
             });
 
-            
+
             document.querySelectorAll('.favorite-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
                     const icon = this.querySelector('i');

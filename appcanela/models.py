@@ -14,10 +14,16 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     categoria = models.CharField(max_length=50)
     precio = models.IntegerField()
+    descripcion = models.TextField(blank=True, default="")
+    imagen = models.ImageField(upload_to="productos/", blank=True, null=True)
     disponible = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nombre
+
+    def precio_clp(self):
+        # 2500 -> "2.500" (formato de miles chileno)
+        return f"{self.precio:,}".replace(",", ".")
 
 
 class Pedido(models.Model):

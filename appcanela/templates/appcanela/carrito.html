@@ -13,6 +13,8 @@
         .nav-login:focus, .nav-login:active { outline: none !important; box-shadow: none !important; }
         .carrito-empty { text-align:center; padding: 60px 20px; color: var(--text-mid); }
         .carrito-empty i { font-size: 3rem; color: var(--warm-tan); display:block; margin-bottom:16px; }
+        .qty-btn-eliminar { background: transparent; color: var(--text-mid); }
+        .qty-btn-eliminar:hover { color: #c0392b; }
     </style>
 </head>
 <body>
@@ -75,15 +77,17 @@
         </div>
     </nav>
 
+    <header class="carrito-header text-center">
+        <div class="container" style="max-width:640px">
+            <p class="carrito-eyebrow"><i class="bi bi-bag-heart me-1"></i> Tu pedido</p>
+            <h1>Carrito</h1>
+        </div>
+    </header>
+
     <div class="carrito-body pt-4">
         <div class="container" style="max-width:640px">
 
-            <div class="carrito-header pb-3 mb-4" style="border-bottom:1px solid var(--warm-tan)">
-                <p class="carrito-eyebrow"><i class="bi bi-bag-heart me-1"></i> Tu pedido</p>
-                <h1 class="carrito-header h3 mb-0" style="font-family:'Playfair Display',serif; color:var(--espresso)">Carrito</h1>
-            </div>
 
-            
             <div id="carrito-items">
                 <div class="carrito-empty">
                     <i class="bi bi-bag-x"></i>
@@ -179,6 +183,7 @@
                             <span class="qty-number">${item.qty}</span>
                             <button class="qty-btn qty-btn-plus" onclick="cambiarCantidad(${idx}, 1)">+</button>
                             <span class="ms-2 fw-bold" style="color:var(--cinnamon);min-width:64px;text-align:right">${formatCLP(item.price * item.qty)}</span>
+                            <button class="qty-btn qty-btn-eliminar ms-1" onclick="eliminarProducto(${idx})" title="Eliminar producto"><i class="bi bi-trash"></i></button>
                         </div>
                     </div>
                 </div>`;
@@ -211,7 +216,14 @@
         function cambiarCantidad(idx, delta) {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             cart[idx].qty += delta;
-            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            if (cart[idx].qty < 1) cart[idx].qty = 1;  // no baja de 1; para quitar, usar el botón eliminar
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCarrito();
+        }
+
+        function eliminarProducto(idx) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(idx, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
             renderCarrito();
         }

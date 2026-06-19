@@ -29,5 +29,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // El pedido ya se proceso y guardo en la BD: vaciamos el carrito del navegador
+        // para que no queden los productos al volver al menu o al carrito.
+        localStorage.removeItem('cart');
+    </script>
 </body>
 </html>
