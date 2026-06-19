@@ -1,146 +1,129 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Pedido — Cinnarolls</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{% static 'appcanela/css/mystyle.css' %}">
+    <style>
+        .nav-login:focus, .nav-login:active { outline: none !important; box-shadow: none !important; }
+        .carrito-empty { text-align:center; padding: 60px 20px; color: var(--text-mid); }
+        .carrito-empty i { font-size: 3rem; color: var(--warm-tan); display:block; margin-bottom:16px; }
+    </style>
 </head>
-
 <body>
 
     <nav>
         <div class="container d-flex align-items-center">
             <a class="nav-brand" href="{% url 'index' %}">
-                <i class="bi bi-emoji-heart-eyes"></i> Cinnarolls
+                <img src="{% static 'appcanela/img/logo.png' %}" alt="Logo" style="width:42px;height:42px;object-fit:contain">
+                Cinnarolls
             </a>
-
             <div class="nav-links ms-auto d-none d-md-flex align-items-center">
-                <a href="{% url 'index' %}" class="active">Inicio</a>
+                <a href="{% url 'index' %}">Inicio</a>
                 <a href="{% url 'menu' %}">Menú</a>
                 <a href="{% url 'nosotros' %}">Nosotros</a>
                 <a href="{% url 'nosotros' %}#contacto">Contacto</a>
             </div>
-
+            {% if user.is_authenticated %}
+            <div class="dropdown ms-3">
+                <a class="nav-login text-decoration-none dropdown-toggle d-flex align-items-center gap-2"
+                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   style="color:var(--cinnamon); font-weight:700;">
+                   <span>{{ user.username }}</span>
+                   <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2"
+                    style="border-radius:12px; padding:8px 0; min-width:200px;">
+                    {% if user.is_staff %}
+                        <li><a class="dropdown-item py-2" href="{% url 'panel_admin' %}"><i class="bi bi-shield-lock me-2"></i>Panel Admin</a></li>
+                    {% else %}
+                        <li><a class="dropdown-item py-2" href="{% url 'perfil' %}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-login ms-3" title="Iniciar sesión">
+                <i class="bi bi-box-arrow-in-right fs-4" style="color:var(--text-mid)"></i>
+            </a>
+            {% endif %}
             <a class="nav-cart ms-3" href="{% url 'carrito' %}">
                 <i class="bi bi-bag"></i>
-                <span>2</span>
+                <span id="cart-badge-count">0</span>
             </a>
-
             <button class="btn d-md-none ms-3 p-0 border-0" data-bs-toggle="collapse" data-bs-target="#mobileNav">
                 <i class="bi bi-list fs-4" style="color:var(--cinnamon)"></i>
             </button>
         </div>
-
         <div class="collapse" id="mobileNav">
             <div class="container py-2">
-                <a href="{% url 'index' %}" class="d-block py-2 mobile-link active-mobile">Inicio</a>
+                <a href="{% url 'index' %}" class="d-block py-2 mobile-link">Inicio</a>
                 <a href="{% url 'menu' %}" class="d-block py-2 mobile-link">Menú</a>
                 <a href="{% url 'nosotros' %}" class="d-block py-2 mobile-link">Nosotros</a>
-                <a href="{% url 'nosotros' %}#contacto" class="d-block py-2 mobile-link">Contacto</a>
             </div>
         </div>
     </nav>
 
-    <div class="carrito-header">
-        <div class="container" style="max-width:640px">
-            <div class="d-flex align-items-center gap-3 mb-2">
-                <a href="{% url 'menu' %}" class="btn-secundario fs-5">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-
-                <div>
-                    <p class="carrito-eyebrow">
-                        <i class="bi bi-bag-heart-fill me-1"></i> Resumen
-                    </p>
-                    <h1>Mi pedido</h1>
-                </div>
-            </div>
-
-            <p class="carrito-fecha" id="resumen-fecha"></p>
-        </div>
-    </div>
-
-    <div class="carrito-body">
+    <div class="carrito-body pt-4">
         <div class="container" style="max-width:640px">
 
-            <p class="section-label mb-3">
-                <i class="bi bi-basket2-fill me-1"></i> Productos
-            </p>
+            <div class="carrito-header pb-3 mb-4" style="border-bottom:1px solid var(--warm-tan)">
+                <p class="carrito-eyebrow"><i class="bi bi-bag-heart me-1"></i> Tu pedido</p>
+                <h1 class="carrito-header h3 mb-0" style="font-family:'Playfair Display',serif; color:var(--espresso)">Carrito</h1>
+            </div>
 
-            <div class="producto-card">
-                <div class="producto-card-body">
-                    <div>
-                        <p class="producto-nombre mb-0">Clásico</p>
-                        <span class="producto-precio">$3.000</span>
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="qty-btn qty-btn-minus">−</button>
-                        <span class="qty-number">1</span>
-                        <button class="qty-btn qty-btn-plus">+</button>
-                    </div>
+            
+            <div id="carrito-items">
+                <div class="carrito-empty">
+                    <i class="bi bi-bag-x"></i>
+                    <p>Tu carrito está vacío</p>
+                    <a href="{% url 'menu' %}" class="btn-cinnamon mt-2">Ver menú</a>
                 </div>
             </div>
 
-            <div class="producto-card">
-                <div class="producto-card-body">
-                    <div>
-                        <p class="producto-nombre mb-0">Chocolate</p>
-                        <span class="producto-precio">$3.500</span>
+            
+            <div id="carrito-resumen" style="display:none">
+                <div class="ornament-divider py-3"><i class="bi bi-flower1"></i></div>
+
+                <form method="post" action="{% url 'procesar_pedido' %}" id="form-pedido" class="contact-form-wrap resumen-pago">
+                    {% csrf_token %}
+                  
+                    <div id="campos-ocultos"></div>
+
+                    <p class="section-label mb-3"><i class="bi bi-receipt me-1"></i> Resumen de pago</p>
+
+                    <div class="mb-3">
+                        <label class="form-label">Método de pago</label>
+                        <select class="form-select" name="metodo_pago" required>
+                            <option value="credito">Crédito</option>
+                            <option value="debito">Débito</option>
+                            <option value="efectivo">Efectivo</option>
+                        </select>
                     </div>
 
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="qty-btn qty-btn-minus">−</button>
-                        <span class="qty-number">1</span>
-                        <button class="qty-btn qty-btn-plus">+</button>
+                    <div class="resumen-row"><span>Subtotal</span><span id="resumen-subtotal">$0</span></div>
+                    <div class="resumen-row"><span>Delivery</span><span>$2.500</span></div>
+                    <hr>
+                    <div class="resumen-total">
+                        <span class="resumen-total-label">Total</span>
+                        <span class="resumen-total-valor" id="resumen-total">$0</span>
                     </div>
-                </div>
-            </div>
 
-            <div class="ornament-divider py-3">
-                <i class="bi bi-flower1"></i>
-            </div>
-
-            <div class="contact-form-wrap resumen-pago">
-                <p class="section-label mb-3">
-                    <i class="bi bi-receipt me-1"></i> Resumen de pago
-                </p>
-
-                <div class="resumen-row">
-                    <span>Subtotal</span>
-                    <span>$6.500</span>
-                </div>
-
-                <div class="resumen-row">
-                    <span id="texto-entrega">Delivery</span>
-                    <span id="precio-entrega">$2.500</span>
-                </div>
-
-                <hr style="border-color:var(--warm-tan)">
-
-                <div class="resumen-total">
-                    <span class="resumen-total-label">Total</span>
-                    <span class="resumen-total-valor" id="precio-total">$9.000</span>
-                </div>
-            </div>
-
-            <div class="d-grid gap-3 mt-4">
-                <a href="{% url 'confirmacion' %}" class="btn-cinnamon justify-content-center">
-                    <i class="bi bi-bag-check-fill"></i> Finalizar pedido
-                </a>
-
-                <a href="{% url 'menu' %}" class="btn-secundario">
-                    <i class="bi bi-arrow-left me-1"></i> Seguir comprando
-                </a>
+                    <button type="submit" class="btn-cinnamon w-100 mt-4 justify-content-center">
+                        <i class="bi bi-bag-check-fill"></i> Finalizar pedido
+                    </button>
+                </form>
             </div>
 
         </div>
@@ -152,27 +135,88 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const DELIVERY = 2500;
 
-    <div class="carrito-header">
-    <div class="container" style="max-width:640px">
-        <div class="d-flex align-items-center gap-3 mb-2">
+        function formatCLP(n) {
+            return '$' + n.toLocaleString('es-CL');
+        }
 
-            <a href="{% url 'menu' %}" class="btn-secundario fs-5">
-                <i class="bi bi-arrow-left"></i>
-            </a>
+        function renderCarrito() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const container = document.getElementById('carrito-items');
+            const resumen   = document.getElementById('carrito-resumen');
+            const badge     = document.getElementById('cart-badge-count');
 
-            <div>
-                <p class="carrito-eyebrow">
-                    <i class="bi bi-bag-heart-fill me-1"></i> Resumen
-                </p>
-                <h1>Mi pedido</h1>
-            </div>
+            const totalItems = cart.reduce((a, i) => a + i.qty, 0);
+            if (badge) badge.textContent = totalItems;
 
-        </div>
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="carrito-empty">
+                        <i class="bi bi-bag-x"></i>
+                        <p>Tu carrito está vacío</p>
+                        <a href="{% url 'menu' %}" class="btn-cinnamon mt-2">Ver menú</a>
+                    </div>`;
+                resumen.style.display = 'none';
+                return;
+            }
 
-        <p class="carrito-fecha" id="resumen-fecha"></p>
-    </div>
-</div>
+            let html = '<p class="section-label mb-3"><i class="bi bi-basket2-fill me-1"></i> Productos</p>';
+            let subtotal = 0;
+
+            cart.forEach((item, idx) => {
+                subtotal += item.price * item.qty;
+                html += `
+                <div class="producto-card">
+                    <div class="producto-card-body">
+                        <div>
+                            <p class="producto-nombre mb-0">${item.name}</p>
+                            <small class="producto-precio">${formatCLP(item.price)} c/u</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="qty-btn qty-btn-minus" onclick="cambiarCantidad(${idx}, -1)">−</button>
+                            <span class="qty-number">${item.qty}</span>
+                            <button class="qty-btn qty-btn-plus" onclick="cambiarCantidad(${idx}, 1)">+</button>
+                            <span class="ms-2 fw-bold" style="color:var(--cinnamon);min-width:64px;text-align:right">${formatCLP(item.price * item.qty)}</span>
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+            resumen.style.display = 'block';
+
+            const total = subtotal + DELIVERY;
+            document.getElementById('resumen-subtotal').textContent = formatCLP(subtotal);
+            document.getElementById('resumen-total').textContent    = formatCLP(total);
+
+            // Llenar campos ocultos para el form POST
+            const ocultos = document.getElementById('campos-ocultos');
+            ocultos.innerHTML = '';
+            cart.forEach((item, idx) => {
+                ocultos.innerHTML += `
+                    <input type="hidden" name="item_nombre_${idx}" value="${item.name}">
+                    <input type="hidden" name="item_precio_${idx}" value="${item.price}">
+                    <input type="hidden" name="item_qty_${idx}"    value="${item.qty}">
+                `;
+            });
+            ocultos.innerHTML += `
+                <input type="hidden" name="subtotal" value="${subtotal}">
+                <input type="hidden" name="total"    value="${total}">
+                <input type="hidden" name="num_items" value="${cart.length}">
+            `;
+        }
+
+        function cambiarCantidad(idx, delta) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCarrito();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCarrito);
+    </script>
 </body>
-
 </html>

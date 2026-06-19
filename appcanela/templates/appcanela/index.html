@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="es">
 
@@ -7,12 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinnarolls | Inicio</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'appcanela/css/mystyle.css' %}">
+    <style>
+        .nav-login:focus, .nav-login:active { outline: none !important; box-shadow: none !important; }
+    </style>
 </head>
 
 <body>
@@ -29,16 +29,44 @@
                 <a href="{% url 'menu' %}">Menú</a>
                 <a href="{% url 'nosotros' %}">Nosotros</a>
                 <a href="{% url 'nosotros' %}#contacto">Contacto</a>
-                <a href="{% url 'registro' %}">Ingresar</a>
             </div>
+
+            {% if user.is_authenticated %}
+            <div class="dropdown ms-3">
+                <a class="nav-login text-decoration-none dropdown-toggle d-flex align-items-center gap-2"
+                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   style="color:var(--cinnamon); font-weight:700;">
+                   <span>{{ user.username }}</span>
+                   <i class="bi bi-person-circle fs-4"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2"
+                    style="border-radius:12px; padding:8px 0; min-width:200px;">
+                    {% if user.is_staff %}
+                        <li><a class="dropdown-item py-2" href="{% url 'panel_admin' %}"><i class="bi bi-shield-lock me-2"></i>Panel Admin</a></li>
+                    {% else %}
+                        <li><a class="dropdown-item py-2" href="{% url 'perfil' %}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item py-2 text-danger"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-login ms-3" title="Iniciar sesión">
+                <i class="bi bi-box-arrow-in-right fs-4" style="color:var(--text-mid)"></i>
+            </a>
+            {% endif %}
 
             <a class="nav-cart ms-3" href="{% url 'carrito' %}">
                 <i class="bi bi-bag"></i>
-                <span>2</span>
+                <span id="cart-badge-count">0</span>
             </a>
 
-            <button class="btn d-md-none ms-3 p-0 border-0"
-                    data-bs-toggle="collapse" data-bs-target="#mobileNav">
+            <button class="btn d-md-none ms-3 p-0 border-0" data-bs-toggle="collapse" data-bs-target="#mobileNav">
                 <i class="bi bi-list fs-4" style="color:var(--cinnamon)"></i>
             </button>
         </div>
@@ -49,12 +77,10 @@
                 <a href="{% url 'menu' %}" class="d-block py-2 mobile-link">Menú</a>
                 <a href="{% url 'nosotros' %}" class="d-block py-2 mobile-link">Nosotros</a>
                 <a href="{% url 'nosotros' %}#contacto" class="d-block py-2 mobile-link">Contacto</a>
-                 <a href="{% url 'registro' %}"class="d-block py-2 mobile-link">Ingresar</a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO -->
     <div class="hero-home">
         <div class="container">
             <div class="row">
@@ -62,18 +88,15 @@
                     <p class="hero-label">
                         <i class="bi bi-heart-fill me-1"></i> Hechos con amor
                     </p>
-
                     <h1 class="hero-title">
                         Rollos de canela<br>
                         <span>recién horneados</span>
                     </h1>
-
                     <p class="hero-text">
                         Disfruta nuestros cinnamon rolls artesanales preparados
                         diariamente con ingredientes de calidad, rellenos únicos
                         y muchísimo sabor.
                     </p>
-
                     <a href="{% url 'menu' %}" class="btn-cinnamon mt-3">
                         Pedir ahora <i class="bi bi-arrow-right ms-1"></i>
                     </a>
@@ -82,120 +105,106 @@
         </div>
     </div>
 
-    <!-- FRANJA ÍCONOS -->
     <div class="features-strip">
         <div class="container">
             <div class="row g-0 text-center">
-                <div class="col-4 feature-item">
-                    <i class="bi bi-heart-fill"></i>
-                    <span>Hechos a mano</span>
-                </div>
-
-                <div class="col-4 feature-item">
-                    <i class="bi bi-award-fill"></i>
-                    <span>Ingredientes de calidad</span>
-                </div>
-
-                <div class="col-4 feature-item">
-                    <i class="bi bi-fire"></i>
-                    <span>Horneados cada día</span>
-                </div>
+                <div class="col-4 feature-item"><i class="bi bi-heart-fill"></i><span>Hechos a mano</span></div>
+                <div class="col-4 feature-item"><i class="bi bi-award-fill"></i><span>Ingredientes de calidad</span></div>
+                <div class="col-4 feature-item"><i class="bi bi-fire"></i><span>Horneados cada día</span></div>
             </div>
         </div>
     </div>
 
-    <!-- DESTACADOS -->
     <div class="destacados-section">
         <div class="container">
-
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <h2 class="section-title mb-0">
-                    <i class="bi bi-heart me-2" style="color:var(--cinnamon)"></i>
-                    Destacados
-                </h2>
-
-                <a href="{% url 'menu' %}" class="ver-mas">
-                    Ver todos <i class="bi bi-arrow-right"></i>
-                </a>
+                <h2 class="section-title mb-0"><i class="bi bi-heart me-2" style="color:var(--cinnamon)"></i>Destacados</h2>
+                <a href="{% url 'menu' %}" class="ver-mas">Ver todos <i class="bi bi-arrow-right"></i></a>
             </div>
-
             <div class="row g-4">
-
                 <div class="col-6 col-md-3">
                     <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="{% static 'appcanela/img/clasico.png' %}" alt="Clásico">
-                        </div>
-
+                        <div class="product-img-wrap"><img src="{% static 'appcanela/img/clasico.png' %}" alt="Clásico"/></div>
                         <div class="product-info">
                             <h6>Clásico</h6>
                             <p>$2.500</p>
-                            <button class="btn-add">
-                                <i class="bi bi-plus"></i> Agregar
-                            </button>
+                            <button class="btn-add" data-name="Clásico" data-price="2500"><i class="bi bi-plus"></i> Agregar</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="col-6 col-md-3">
                     <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="{% static 'appcanela/img/oreo.png' %}" alt="Oreo">
-                        </div>
-
+                        <div class="product-img-wrap"><img src="{% static 'appcanela/img/oreo.png' %}" alt="Oreo"/></div>
                         <div class="product-info">
                             <h6>Oreo</h6>
                             <p>$3.000</p>
-                            <button class="btn-add">
-                                <i class="bi bi-plus"></i> Agregar
-                            </button>
+                            <button class="btn-add" data-name="Oreo" data-price="3000"><i class="bi bi-plus"></i> Agregar</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="col-6 col-md-3">
                     <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="{% static 'appcanela/img/chocPistacho.png' %}" alt="Chocolate y Pistacho">
-                        </div>
-
+                        <div class="product-img-wrap"><img src="{% static 'appcanela/img/chocPistacho.png' %}" alt="Chocolate y Pistacho"/></div>
                         <div class="product-info">
-                            <h6>Chocolate y Pistacho</h6>
+                            <h6>Choc-Pistacho</h6>
                             <p>$3.500</p>
-                            <button class="btn-add">
-                                <i class="bi bi-plus"></i> Agregar
-                            </button>
+                            <button class="btn-add" data-name="Choc-Pistacho" data-price="3500"><i class="bi bi-plus"></i> Agregar</button>
                         </div>
                     </div>
                 </div>
-
                 <div class="col-6 col-md-3">
                     <div class="product-card">
-                        <div class="product-img-wrap">
-                            <img src="{% static 'appcanela/img/lotus.png' %}" alt="Lotus">
-                        </div>
-
+                        <div class="product-img-wrap"><img src="{% static 'appcanela/img/lotus.png' %}" alt="Lotus"/></div>
                         <div class="product-info">
                             <h6>Lotus</h6>
                             <p>$3.500</p>
-                            <button class="btn-add">
-                                <i class="bi bi-plus"></i> Agregar
-                            </button>
+                            <button class="btn-add" data-name="Lotus" data-price="3500"><i class="bi bi-plus"></i> Agregar</button>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer>
         <p class="mb-1">© 2026 <strong>Cinnarolls</strong> — Hechos con amor, pensados para ti 🍥</p>
         <p class="mb-0" style="font-size:.75rem">Concepción, Chile</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+           
+            function updateBadge() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const count = cart.reduce((acc, item) => acc + item.qty, 0);
+                const badge = document.getElementById('cart-badge-count');
+                if (badge) badge.textContent = count;
+            }
+            updateBadge();
 
+            
+            document.querySelectorAll('.btn-add').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const name  = this.dataset.name;
+                    const price = parseInt(this.dataset.price);
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const idx = cart.findIndex(i => i.name === name);
+                    if (idx > -1) { cart[idx].qty++; }
+                    else { cart.push({ name, price, qty: 1 }); }
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateBadge();
+
+                    // Feedback visual
+                    this.innerHTML = '<i class="bi bi-check-lg"></i> ¡Listo!';
+                    this.disabled = true;
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="bi bi-plus"></i> Agregar';
+                        this.disabled = false;
+                    }, 1000);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
