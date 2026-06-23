@@ -125,3 +125,5 @@ MEDIA_ROOT = BASE_DIR / "media"
 import os
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'appcanela/static')]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -136,8 +136,10 @@
                                     id="passIcon"></i></button>
                         </div>
                     </div>
-                    <div class="text-end mb-4"><a href="#" class="auth-hint" style="font-size:.82rem">¿Olvidaste tu
-                            contraseña?</a></div>
+                    <div class="text-end mb-4">
+                        <a href="{% url 'password_reset' %}" class="auth-hint" style="font-size:.82rem">¿Olvidaste tu
+                            contraseña?</a>
+                    </div>
                     <button class="btn-cinnamon w-100 justify-content-center mb-3" type="submit"><i
                             class="bi bi-box-arrow-in-right"></i> Iniciar sesión</button>
                 </form>

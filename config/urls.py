@@ -23,14 +23,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("appcanela.urls")),
-]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-urlpatterns = [
-    # ... lo que ya tienes ...
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='appcanela/password_reset.html',
         email_template_name='appcanela/password_reset_email.html',
@@ -47,3 +39,6 @@ urlpatterns = [
         template_name='appcanela/password_reset_complete.html'
     ), name='password_reset_complete'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
