@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Usuario
     path('perfil/', views.perfil, name='perfil'),
+    path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
 
     # Admin
     path('panel-admin/', views.panel_admin, name='panel_admin'),

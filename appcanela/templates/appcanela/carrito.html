@@ -45,6 +45,7 @@
                         <li><a class="dropdown-item py-2" href="{% url 'panel_admin' %}"><i class="bi bi-shield-lock me-2"></i>Panel Admin</a></li>
                     {% else %}
                         <li><a class="dropdown-item py-2" href="{% url 'perfil' %}"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                        <li><a class="dropdown-item" href="{% url 'mis_pedidos' %}">Mis pedidos</a></li>
                     {% endif %}
                     <li><hr class="dropdown-divider"></li>
                     <li>
@@ -56,8 +57,8 @@
                 </ul>
             </div>
             {% else %}
-            <a href="{% url 'login' %}" class="nav-login ms-3" title="Iniciar sesión">
-                <i class="bi bi-box-arrow-in-right fs-4" style="color:var(--text-mid)"></i>
+            <a href="{% url 'login' %}" class="nav-login ms-3 d-flex align-items-center gap-2" title="Iniciar sesión">
+                <i class="bi bi-person-circle fs-5" style="color:var(--text-mid)"></i>
             </a>
             {% endif %}
             <a class="nav-cart ms-3" href="{% url 'carrito' %}">

@@ -100,7 +100,14 @@ def confirmacion(request):
 
 @login_required
 def perfil(request):
-    return render(request, 'appcanela/perfil.html')
+    pedidos = Pedido.objects.filter(usuario=request.user).order_by('-creado_en').prefetch_related('items')
+    return render(request, 'appcanela/perfil.html', {'pedidos': pedidos})
+
+
+@login_required
+def mis_pedidos(request):
+    pedidos = Pedido.objects.filter(usuario=request.user).order_by('-creado_en').prefetch_related('items')
+    return render(request, 'appcanela/mis_pedidos.html', {'pedidos': pedidos})
 
 @user_passes_test(lambda u: u.is_staff)
 def panel_admin(request):
