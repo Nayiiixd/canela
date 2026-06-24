@@ -86,8 +86,9 @@
 
     <div class="container py-5" style="max-width:520px;">
 
-        <p class="section-label mb-1">Finalizar compra</p>
-        <h3 class="mb-1" style="font-family:'Playfair Display',serif; color:var(--espresso)">Datos de pago</h3>
+        <p class="section-label mb-1">Último paso</p>
+        <h3 class="mb-1" style="font-family:'Playfair Display',serif; color:var(--espresso)">Ingresa los datos de tu
+            tarjeta</h3>
         <p class="text-muted mb-4" style="font-size:.9rem">Simulación segura — ningún dato es procesado realmente.</p>
 
         {% if pedido %}
@@ -133,12 +134,7 @@
             <!-- Invitado o usuario sin tarjeta -->
             {% if not user.is_authenticated %}
             <div class="mb-3">
-                <label class="form-label">Tu nombre</label>
-                <div class="input-icon-wrap">
-                    <i class="bi bi-person"></i>
-                    <input type="text" name="nombre_invitado" class="form-control" placeholder="¿Cómo te llamamos?"
-                        required oninput="this.value=this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑ\s]/g,'')">
-                </div>
+                <label class="form-label"></label>
             </div>
             {% endif %}
             {% include 'appcanela/_form_tarjeta.html' %}
@@ -163,10 +159,7 @@
                 onclick="capturarDatos(); document.getElementById('inputResultado').value='aprobado'">
                 <i class="bi bi-lock-fill me-1"></i> Pagar ahora
             </button>
-            <button type="submit" class="btn-guest w-100 justify-content-center"
-                onclick="capturarDatos(); document.getElementById('inputResultado').value='rechazado'">
-                <i class="bi bi-x-circle me-1"></i> Simular pago rechazado
-            </button>
+    
         </form>
 
         <div class="text-center mt-4">

@@ -141,15 +141,6 @@
 
                     <p class="section-label mb-3"><i class="bi bi-receipt me-1"></i> Resumen de pago</p>
 
-                    <div class="mb-3">
-                        <label class="form-label">Método de pago</label>
-                        <select class="form-select" name="metodo_pago" required>
-                            <option value="credito">Crédito</option>
-                            <option value="debito">Débito</option>
-                            <option value="efectivo">Efectivo</option>
-                        </select>
-                    </div>
-
                     <div class="resumen-row"><span>Subtotal</span><span id="resumen-subtotal">$0</span></div>
                     <div class="resumen-row"><span>Delivery</span><span>$2.500</span></div>
                     <hr>
@@ -158,50 +149,7 @@
                         <span class="resumen-total-valor" id="resumen-total">$0</span>
                     </div>
 
-                    <div class="ornament-divider py-3"><i class="bi bi-flower1"></i></div>
-                    <p class="section-label mb-3"><i class="bi bi-geo-alt me-1"></i> Datos de entrega</p>
-
-                    {% if not user.is_authenticated %}
-                    <div class="mb-3">
-                        <label class="form-label">Tu nombre</label>
-                        <div class="input-icon-wrap">
-                            <i class="bi bi-person"></i>
-                            <input type="text" class="form-control" name="nombre_invitado"
-                                placeholder="¿Cómo te llamamos?" required
-                                oninput="this.value=this.value.replace(/[^A-Za-záéíóúÁÉÍÓÚñÑ\s]/g,'')">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Correo electrónico</label>
-                        <div class="input-icon-wrap">
-                            <i class="bi bi-envelope"></i>
-                            <input type="email" class="form-control" name="correo_invitado"
-                                placeholder="Para enviarte la confirmación" required>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <div class="mb-3">
-                        <label class="form-label">Dirección de entrega</label>
-                        <div class="input-icon-wrap">
-                            <i class="bi bi-geo-alt"></i>
-                            <input type="text" class="form-control" name="direccion" placeholder="Calle, número, depto."
-                                required>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label">Fecha de entrega</label>
-                        <div class="input-icon-wrap">
-                            <i class="bi bi-calendar3"></i>
-                            <input type="date" class="form-control" name="fecha_entrega" id="fechaEntrega" required>
-                        </div>
-                        <small class="text-muted" style="font-size:.8rem">
-                            Disponible de lunes a sábado. Mínimo 1 día de anticipación.
-                        </small>
-                    </div>
-
-                    <button type="submit" class="btn-cinnamon w-100 mt-2 justify-content-center">
+                    <button type="submit" class="btn-cinnamon w-100 mt-4 justify-content-center">
                         <i class="bi bi-bag-check-fill"></i> Finalizar pedido
                     </button>
                 </form>
@@ -306,7 +254,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', renderCarrito);
-        
+
         // Fijar fecha mínima: mañana, solo lunes a sábado
         (function () {
             const input = document.getElementById('fechaEntrega');

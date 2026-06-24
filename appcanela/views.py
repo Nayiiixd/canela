@@ -71,8 +71,6 @@ def registro(request):
 
 @require_POST
 def procesar_pedido(request):
-    metodo_pago = request.POST.get("metodo_pago")
-
     try:
         subtotal = int(request.POST.get("subtotal", 0))
         total = int(request.POST.get("total", 0))
@@ -81,20 +79,14 @@ def procesar_pedido(request):
         messages.error(request, "Datos inválidos en el pedido.")
         return redirect("carrito")
 
-    direccion = request.POST.get("direccion", "").strip()
-    fecha_entrega = request.POST.get("fecha_entrega") or None
-    correo_invitado = request.POST.get("correo_invitado", "").strip()
-    nombre_invitado = request.POST.get("nombre_invitado", "").strip()
+    metodo_pago = request.POST.get("metodo_pago", "credito")
 
     pedido = Pedido.objects.create(
         usuario=request.user if request.user.is_authenticated else None,
-        nombre_cliente=request.user.first_name if request.user.is_authenticated else nombre_invitado,
+        nombre_cliente=request.user.first_name if request.user.is_authenticated else None,
         metodo_pago=metodo_pago,
         subtotal=subtotal,
         total=total,
-        direccion_entrega=direccion,
-        fecha_entrega=fecha_entrega,
-        correo_invitado=correo_invitado if not request.user.is_authenticated else None,
     )
     for i in range(num_items):
         nombre = request.POST.get(f"item_nombre_{i}")
@@ -108,7 +100,52 @@ def procesar_pedido(request):
                 cantidad=int(cantidad)
             )
     request.session['ultimo_pedido_id'] = pedido.id
-    return redirect("simulacion_pago")
+
+    # Si no está logueado, ir al login primero
+    if not request.user.is_authenticated:
+        return redirect(f"/login/?next=/checkout/")
+    return redirect("checkout")
+
+
+def checkout(request):
+    pedido_id = request.session.get('ultimo_pedido_id')
+    pedido = get_object_or_404(Pedido, id=pedido_id) if pedido_id else None
+    perfil = None
+    if request.user.is_authenticated:
+        perfil, _ = PerfilCliente.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        direccion = request.POST.get("direccion", "").strip()
+        fecha_entrega = request.POST.get("fecha_entrega") or None
+        nombre_invitado = request.POST.get("nombre_invitado", "").strip()
+        correo_invitado = request.POST.get("correo_invitado", "").strip()
+        metodo_pago = request.POST.get("metodo_pago", "credito")
+
+        if pedido:
+            pedido.direccion_entrega = direccion
+            pedido.fecha_entrega = fecha_entrega
+            pedido.metodo_pago = metodo_pago
+            if not request.user.is_authenticated:
+                pedido.nombre_cliente = nombre_invitado
+                pedido.correo_invitado = correo_invitado
+            pedido.save()
+
+        if metodo_pago == 'efectivo':
+            return redirect("pago_resultado_efectivo")
+        return redirect("simulacion_pago")
+
+    return render(request, 'appcanela/checkout.html', {
+        'pedido': pedido,
+        'perfil': perfil,
+    })
+
+def pago_resultado_efectivo(request):
+    pedido_id = request.session.get('ultimo_pedido_id')
+    pedido = get_object_or_404(Pedido, id=pedido_id) if pedido_id else None
+    return render(request, 'appcanela/pago_resultado.html', {
+        'pedido': pedido,
+        'resultado': 'aprobado',
+    })
 
 
 def confirmacion(request):

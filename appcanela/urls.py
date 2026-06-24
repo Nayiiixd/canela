@@ -17,7 +17,8 @@ urlpatterns = [
     path('procesar-pedido/', views.procesar_pedido, name='procesar_pedido'),
     path('confirmacion/', views.confirmacion, name='confirmacion'),
     path('pago/', views.simulacion_pago, name='simulacion_pago'),
-
+    path('pago/efectivo/', views.pago_resultado_efectivo, name='pago_resultado_efectivo'),
+    path('checkout/', views.checkout, name='checkout'),
     # Usuario
     path('perfil/', views.perfil, name='perfil'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
