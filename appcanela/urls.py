@@ -16,6 +16,7 @@ urlpatterns = [
     path('carrito/', views.carrito, name='carrito'),
     path('procesar-pedido/', views.procesar_pedido, name='procesar_pedido'),
     path('confirmacion/', views.confirmacion, name='confirmacion'),
+    path('pago/', views.simulacion_pago, name='simulacion_pago'),
 
     # Usuario
     path('perfil/', views.perfil, name='perfil'),

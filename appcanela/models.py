@@ -5,10 +5,13 @@ class PerfilCliente(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     telefono = models.CharField(max_length=20, blank=True, null=True)
     fecha_nacimiento = models.DateField(blank=True, null=True)
+    # Tarjeta (solo últimos 4 dígitos, nunca el número completo)
+    tarjeta_ultimos4 = models.CharField(max_length=4, blank=True, null=True)
+    tarjeta_nombre = models.CharField(max_length=100, blank=True, null=True)
+    tarjeta_vencimiento = models.CharField(max_length=5, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
-
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
@@ -46,10 +49,12 @@ class Pedido(models.Model):
     total = models.IntegerField()
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
     creado_en = models.DateTimeField(auto_now_add=True)
+    direccion_entrega = models.CharField(max_length=200, blank=True, null=True)
+    fecha_entrega = models.DateField(blank=True, null=True)
+    correo_invitado = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return f"Pedido #{self.id}"
-
 
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='items')

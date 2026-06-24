@@ -69,31 +69,47 @@ def registro(request):
         return redirect("index")
     return render(request, 'appcanela/registro.html')
 
-@login_required
 @require_POST
 def procesar_pedido(request):
     metodo_pago = request.POST.get("metodo_pago")
-    subtotal = int(request.POST.get("subtotal"))
-    total = int(request.POST.get("total"))
-    num_items = int(request.POST.get("num_items"))
+
+    try:
+        subtotal = int(request.POST.get("subtotal", 0))
+        total = int(request.POST.get("total", 0))
+        num_items = int(request.POST.get("num_items", 0))
+    except ValueError:
+        messages.error(request, "Datos inválidos en el pedido.")
+        return redirect("carrito")
+
+    direccion = request.POST.get("direccion", "").strip()
+    fecha_entrega = request.POST.get("fecha_entrega") or None
+    correo_invitado = request.POST.get("correo_invitado", "").strip()
+    nombre_invitado = request.POST.get("nombre_invitado", "").strip()
+
     pedido = Pedido.objects.create(
-        usuario=request.user,
-        nombre_cliente=request.user.first_name,
+        usuario=request.user if request.user.is_authenticated else None,
+        nombre_cliente=request.user.first_name if request.user.is_authenticated else nombre_invitado,
         metodo_pago=metodo_pago,
         subtotal=subtotal,
-        total=total
+        total=total,
+        direccion_entrega=direccion,
+        fecha_entrega=fecha_entrega,
+        correo_invitado=correo_invitado if not request.user.is_authenticated else None,
     )
     for i in range(num_items):
         nombre = request.POST.get(f"item_nombre_{i}")
         precio = request.POST.get(f"item_precio_{i}")
         cantidad = request.POST.get(f"item_qty_{i}")
-        ItemPedido.objects.create(
-            pedido=pedido,
-            nombre=nombre,
-            precio=int(precio),
-            cantidad=int(cantidad)
-        )
-    return redirect("confirmacion")
+        if nombre and precio and cantidad:
+            ItemPedido.objects.create(
+                pedido=pedido,
+                nombre=nombre,
+                precio=int(precio),
+                cantidad=int(cantidad)
+            )
+    request.session['ultimo_pedido_id'] = pedido.id
+    return redirect("simulacion_pago")
+
 
 def confirmacion(request):
     return render(request, 'appcanela/confirmacion.html')
@@ -187,3 +203,40 @@ def producto_eliminar(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     producto.delete()
     return redirect("panel_admin")
+
+def simulacion_pago(request):
+    pedido_id = request.session.get('ultimo_pedido_id')
+    pedido = get_object_or_404(Pedido, id=pedido_id) if pedido_id else None
+    perfil = None
+    if request.user.is_authenticated:
+        perfil, _ = PerfilCliente.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        resultado = request.POST.get('resultado', 'aprobado')
+
+        # Guardar nombre del invitado
+        if not request.user.is_authenticated and pedido:
+            nombre_invitado = request.POST.get('nombre_invitado', '').strip()
+            if nombre_invitado:
+                pedido.nombre_cliente = nombre_invitado
+                pedido.save()
+
+        # Guardar tarjeta si es usuario registrado
+        if request.user.is_authenticated and perfil and resultado == 'aprobado':
+            guardar = request.POST.get('guardar_tarjeta')
+            num = request.POST.get('num_tarjeta', '').replace(' ', '')
+            if guardar and len(num) >= 4:
+                perfil.tarjeta_ultimos4 = num[-4:]
+                perfil.tarjeta_nombre = request.POST.get('nombre_tarjeta', '')
+                perfil.tarjeta_vencimiento = request.POST.get('vencimiento', '')
+                perfil.save()
+
+        return render(request, 'appcanela/pago_resultado.html', {
+            'pedido': pedido,
+            'resultado': resultado,
+        })
+
+    return render(request, 'appcanela/simulacion_pago.html', {
+        'pedido': pedido,
+        'perfil': perfil,
+    })
